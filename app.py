@@ -1,4 +1,6 @@
-from flask import Flask, request, jsonify, send_file
+from flask import Flask, request, jsonify
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import networkx as nx
 import io
@@ -17,6 +19,10 @@ class Actividad:
         self.inicio_tardio = 0
         self.final_tardio = 0
         self.holgura = 0
+
+@app.route('/')
+def home():
+    return "✅ Backend de Ruta Crítica funcionando"
 
 @app.route('/ruta-critica', methods=['POST'])
 def calcular():
@@ -48,7 +54,8 @@ def calcular():
 
     ruta_critica = [a.nombre for a in actividades if a.holgura == 0]
 
-    pos = nx.spring_layout(G)
+    # Dibujar gráfico
+    pos = nx.spring_layout(G, seed=42)
     colores = ['red' if nodo in ruta_critica else 'skyblue' for nodo in G.nodes()]
     labels = {n: f"{n}\nT:{nodos[n].duracion}\nH:{nodos[n].holgura}" for n in G.nodes()}
 
